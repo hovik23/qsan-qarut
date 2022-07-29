@@ -47,7 +47,6 @@ class Game():
 							line[i] = line[i] * 2
 							line[k + 1] = 0
 
-
 		# Aj
 		elif move == 'r':
 			# amen sharqi hamar
@@ -62,6 +61,39 @@ class Game():
 						if line[k + 1] == line[i]:
 							line[k + 1] = line[k + 1] * 2
 							line[i] = 0
+
+		elif move == 'u':
+			# amen sharqi hamar
+			self.board = self.board.transpose()
+			for line in self.board:
+				# amen tvi hamar tvyal sharqum
+				for i in range(len(line) - 1):
+					if line[i] != 0:
+						k = i
+						while k + 1 < self.grid - 1 and line[k + 1] == 0:
+							k += 1
+
+						if line[k + 1] == line[i]:
+							line[i] = line[i] * 2
+							line[k + 1] = 0
+			self.board = self.board.transpose()
+			
+
+		elif move == 'b':
+			# amen sharqi hamar
+			self.board = self.board.transpose()
+			for line in self.board:
+				# amen tvi hamar tvyal sharqum
+				for i in range(len(line) - 1):
+					if line[i] != 0:
+						k = i
+						while k + 1 < self.grid - 1 and line[k + 1] == 0:
+							k += 1
+
+						if line[k + 1] == line[i]:
+							line[k + 1] = line[k + 1] * 2
+							line[i] = 0
+			self.board = self.board.transpose()
 
 
 	# Gtnel, te qani vandak e azat vorosh koxmic
@@ -89,15 +121,31 @@ class Game():
 				line = line[line != 0]
 				line = np.insert(line, 0, [ 0 for i in range(self.grid - len(line)) ])
 				self.board[i] = line
+		elif move == 'b':
+			self.board = self.board.transpose()
+			for i, line in enumerate(self.board):
+				line = line[line != 0]
+				line = np.insert(line, 0, [ 0 for i in range(self.grid - len(line)) ])
+				self.board[i] = line
+			self.board = self.board.transpose()
+		elif move == 'u':
+			self.board = self.board.transpose()
+			for i, line in enumerate(self.board):
+				line = line[line != 0]
+				line = np.insert(line, len(line), [ 0 for i in range(self.grid - len(line)) ])
+				self.board[i] = line 
+			self.board = self.board.transpose()
 					
-
-
 	def make_move(self, move):
 		self.stack(move)
 		self.shift(move)
 
 	def update_score(self):
 		self.score = int(self.board.sum())
+
+	def check_finish(self):
+		if 2048 in self.board:
+			self.is_won = True
 
 	def show_model(self):
 		self.update_score()
