@@ -36,6 +36,11 @@ class Game():
 		is_horiz_available = False
 		is_vert_available = False
 
+		is_left_available = False
+		is_right_available = False
+		is_up_available = False
+		is_down_available = False
+
 		# stugum enq, ardyoq qayl ka "dba" dzax kam aj
 		for line in self.board:
 			line = line[line != 0]
@@ -45,6 +50,8 @@ class Game():
 
 		# stugum enq, ardyoq qayl ka "dba" nerqev kam verev
 		for line in self.board.transpose():
+			if 0 in line:
+				is_vert_available = True
 			line = line[line != 0]
 			for i in range(len(line) - 1):
 				if line[i] == line[i + 1]:
@@ -56,7 +63,7 @@ class Game():
 		is_horiz_available, is_vert_available = self.is_move_available()
 
 		# Dzax
-		if move == 'l' and is_horiz_available:
+		if move == 'l':
 			# amen sharqi hamar
 			for i, line in enumerate(self.board):
 				line = line[line != 0]
@@ -72,7 +79,7 @@ class Game():
 				self.board[i] = line
 
 		# Aj
-		elif move == 'r' and is_horiz_available:
+		elif move == 'r':
 			# amen sharqi hamar
 			for i, line in enumerate(self.board):
 				line = line[line != 0]
@@ -87,7 +94,7 @@ class Game():
 				line = np.insert(line, 0, [ 0 for _ in range(self.grid - len(line)) ])
 				self.board[i] = line
 
-		elif move == 'b' and is_vert_available:
+		elif move == 'b':
 			self.board = self.board.transpose()
 			# amen sharqi hamar
 			for i, line in enumerate(self.board):
@@ -104,7 +111,7 @@ class Game():
 				self.board[i] = line
 			self.board = self.board.transpose()
 
-		elif move == 'u' and is_vert_available:
+		elif move == 'u':
 			self.board = self.board.transpose()
 			# amen sharqi hamar
 			for i, line in enumerate(self.board):
@@ -122,9 +129,6 @@ class Game():
 			self.board = self.board.transpose()
 					
 	def make_move(self, move):
-		if self.is_move_available == False:
-			print("GAME OVER")
-			exit()
 		self.stack(move)
 		self.update_score()
 		self.check_finish()
@@ -139,7 +143,8 @@ class Game():
 			print("CONGRATULATIONS!!! YOU WON!!!")
 			print()
 
-		if 0 not in self.board and not self.is_move_available():
+		is_horiz_available, is_vert_available = self.is_move_available()
+		if 0 not in self.board and not is_horiz_available and not is_vert_available:
 			self.is_finished = True
 			print("GAME OVER")
 			exit()
@@ -154,21 +159,25 @@ class Game():
 		self.make_move('l')
 		self.add_num()
 		self.show_model()
+		self.check_finish()
 
 	def right_arrow(self, event):
 		self.make_move('r')
 		self.add_num()
 		self.show_model()
+		self.check_finish()
 
 	def up_arrow(self, event):
 		self.make_move('u')
 		self.add_num()
 		self.show_model()
+		self.check_finish()
 
 	def down_arrow(self, event):
 		self.make_move('b')
 		self.add_num()
 		self.show_model()
+		self.check_finish()
 
 class Model():
 	def __init__(self, N):
