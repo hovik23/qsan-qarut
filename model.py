@@ -20,138 +20,155 @@ class Game():
 
 	# Avelacnel mek tiv
 	def add_num(self):
-		i, j = self.get_random_position()
-		while self.board[i][j] != 0:
+		if 0 in self.board:
 			i, j = self.get_random_position()
-		self.board[i][j] = 2
+			self.board[i][j] = 2
 
 	# Gtnel azat vandak
 	def get_random_position(self):
-		i = random.randint(0, self.grid - 1)
-		j = random.randint(0, self.grid - 1)
+		zeros = np.argwhere(self.board == 0) # Indices where board == 0
+		indices = np.ravel_multi_index([zeros[:, 0], zeros[:, 1]], self.board.shape)
+		ind = np.random.choice(indices)
+		i, j = np.unravel_index(ind, self.board.shape)
 		return i, j
 
-	def stack(self, move):
-		# Dzax
-		if move == 'l':
-			# amen sharqi hamar
-			for line in self.board:
-				# amen tvi hamar tvyal sharqum
-				for i in range(len(line) - 1):
-					if line[i] != 0:
-						k = i
-						while k + 1 < self.grid - 1 and line[k + 1] == 0:
-							k += 1
+	def is_move_available(self):
+		is_horiz_available = False
+		is_vert_available = False
 
-						if line[k + 1] == line[i]:
-							line[i] = line[i] * 2
-							line[k + 1] = 0
+		# stugum enq, ardyoq qayl ka "dba" dzax kam aj
+		for line in self.board:
+			line = line[line != 0]
+			for i in range(len(line) - 1):
+				if line[i] == line[i + 1]:
+					is_horiz_available = True
+
+		# stugum enq, ardyoq qayl ka "dba" nerqev kam verev
+		for line in self.board.transpose():
+			line = line[line != 0]
+			for i in range(len(line) - 1):
+				if line[i] == line[i + 1]:
+					is_vert_available = True
+
+		return is_horiz_available, is_vert_available
+
+	def stack(self, move):
+		is_horiz_available, is_vert_available = self.is_move_available()
+
+		# Dzax
+		if move == 'l' and is_horiz_available:
+			# amen sharqi hamar
+			for i, line in enumerate(self.board):
+				line = line[line != 0]
+				# amen tvi hamar tvyal sharqum
+				p = 0
+				while p < len(line) - 1 and len(line) > 1:
+					if line[p] == line[p + 1]:
+						line[p] *= 2
+						line[p + 1] = 0
+					p += 1
+				line = line[line != 0]
+				line = np.insert(line, len(line), [ 0 for _ in range(self.grid - len(line)) ])
+				self.board[i] = line
 
 		# Aj
-		elif move == 'r':
+		elif move == 'r' and is_horiz_available:
 			# amen sharqi hamar
-			for line in self.board:
-				# amen tvi hamar tvyal sharqum
-				for i in range(len(line) - 1):
-					if line[i] != 0:
-						k = i
-						while k + 1 < self.grid - 1 and line[k + 1] == 0:
-							k += 1
-
-						if line[k + 1] == line[i]:
-							line[k + 1] = line[k + 1] * 2
-							line[i] = 0
-
-		elif move == 'u':
-			# amen sharqi hamar
-			self.board = self.board.transpose()
-			for line in self.board:
-				# amen tvi hamar tvyal sharqum
-				for i in range(len(line) - 1):
-					if line[i] != 0:
-						k = i
-						while k + 1 < self.grid - 1 and line[k + 1] == 0:
-							k += 1
-
-						if line[k + 1] == line[i]:
-							line[i] = line[i] * 2
-							line[k + 1] = 0
-			self.board = self.board.transpose()
-			
-
-		elif move == 'b':
-			# amen sharqi hamar
-			self.board = self.board.transpose()
-			for line in self.board:
-				# amen tvi hamar tvyal sharqum
-				for i in range(len(line) - 1):
-					if line[i] != 0:
-						k = i
-						while k + 1 < self.grid - 1 and line[k + 1] == 0:
-							k += 1
-
-						if line[k + 1] == line[i]:
-							line[k + 1] = line[k + 1] * 2
-							line[i] = 0
-			self.board = self.board.transpose()
-
-
-	# Gtnel, te qani vandak e azat vorosh koxmic
-	def get_shift(self, move):
-		# "dba" dzax
-		if move == 'l':
-			shift_array = [ np.nonzero(line != 0)[0][0] if len(np.nonzero(line != 0)[0]) != 0 else 0 for line in self.board ]
-			print("Left shift array:", shift_array)
-			return shift_array
-
-		# "dba" aj
-		elif move == 'r':
-			shift_array = [ self.grid - np.nonzero(line != 0)[0][-1] - 1 if len(np.nonzero(line != 0)[0]) != 0 else 0 for line in self.board ]
-			print("Right shift array:", shift_array)
-			return shift_array
-
-	def shift(self, move):
-		if move == 'l':
 			for i, line in enumerate(self.board):
 				line = line[line != 0]
-				line = np.insert(line, len(line), [ 0 for i in range(self.grid - len(line)) ])
+				# amen tvi hamar tvyal sharqum
+				p = len(line) - 1
+				while p > 0 and len(line) > 1:
+					if line[p] == line[p - 1]:
+						line[p] *= 2
+						line[p - 1] = 0
+					p -= 1
+				line = line[line != 0]
+				line = np.insert(line, 0, [ 0 for _ in range(self.grid - len(line)) ])
 				self.board[i] = line
-		elif move == 'r':
-			for i, line in enumerate(self.board):
-				line = line[line != 0]
-				line = np.insert(line, 0, [ 0 for i in range(self.grid - len(line)) ])
-				self.board[i] = line
-		elif move == 'b':
+
+		elif move == 'b' and is_vert_available:
 			self.board = self.board.transpose()
+			# amen sharqi hamar
 			for i, line in enumerate(self.board):
 				line = line[line != 0]
-				line = np.insert(line, 0, [ 0 for i in range(self.grid - len(line)) ])
+				# amen tvi hamar tvyal sharqum
+				p = 0
+				while p < len(line) - 1 and len(line) > 1:
+					if line[p] == line[p + 1]:
+						line[p] *= 2
+						line[p + 1] = 0
+					p += 1
+				line = line[line != 0]
+				line = np.insert(line, 0, [ 0 for _ in range(self.grid - len(line)) ])
 				self.board[i] = line
 			self.board = self.board.transpose()
-		elif move == 'u':
+
+		elif move == 'u' and is_vert_available:
 			self.board = self.board.transpose()
+			# amen sharqi hamar
 			for i, line in enumerate(self.board):
 				line = line[line != 0]
-				line = np.insert(line, len(line), [ 0 for i in range(self.grid - len(line)) ])
-				self.board[i] = line 
+				# amen tvi hamar tvyal sharqum
+				p = len(line) - 1
+				while p > 0 and len(line) > 1:
+					if line[p] == line[p - 1]:
+						line[p] *= 2
+						line[p - 1] = 0
+					p -= 1
+				line = line[line != 0]
+				line = np.insert(line, len(line), [ 0 for _ in range(self.grid - len(line)) ])
+				self.board[i] = line
 			self.board = self.board.transpose()
 					
 	def make_move(self, move):
+		if self.is_move_available == False:
+			print("GAME OVER")
+			exit()
 		self.stack(move)
-		self.shift(move)
+		self.update_score()
+		self.check_finish()
 
 	def update_score(self):
 		self.score = int(self.board.sum())
 
 	def check_finish(self):
-		if 2048 in self.board:
+		if 2048 in self.board and self.is_won == False:
 			self.is_won = True
+			print()
+			print("CONGRATULATIONS!!! YOU WON!!!")
+			print()
+
+		if 0 not in self.board and not self.is_move_available():
+			self.is_finished = True
+			print("GAME OVER")
+			exit()
 
 	def show_model(self):
 		self.update_score()
-		# print('Score:', self.score)
+		print('Score:', self.score)
 		print(self.board)
 		print()
+
+	def left_arrow(self, event):
+		self.make_move('l')
+		self.add_num()
+		self.show_model()
+
+	def right_arrow(self, event):
+		self.make_move('r')
+		self.add_num()
+		self.show_model()
+
+	def up_arrow(self, event):
+		self.make_move('u')
+		self.add_num()
+		self.show_model()
+
+	def down_arrow(self, event):
+		self.make_move('b')
+		self.add_num()
+		self.show_model()
 
 class Model():
 	def __init__(self, N):
