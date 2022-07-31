@@ -5,7 +5,7 @@
 
 2048 is a single-player sliding block puzzle game designed by Italian web developer Gabriele Cirulli. The game’s objective is to slide numbered tiles on a grid to combine them to create a tile with the number 2048. However, one can continue to play the game after reaching the goal, creating tiles with larger numbers.
 
-This is an implementation of 2048 game, which will work for any $$N \times N$$ grid.
+This is an implementation of 2048 game, which will work for any $N \times N$ grid.
 
 ## Prerequisites
 * Python
@@ -17,7 +17,7 @@ This is an implementation of 2048 game, which will work for any $$N \times N$$ g
 ```
 python3 game.py
 ```
-*Note: to change the size $$N$$ of the grid find it in `controller.py` file*
+*Note: to change the size $N$ of the grid find it in `controller.py` file*
 
 ## Structure
 The application is created using the MVC (Model - View - Controller) pattern.
@@ -46,9 +46,9 @@ class Game():
 		self.set_board()
 ```
 
-As you can see a single game has the property of `grid` which is the $$N$$. It also stores the `score`, i.e. the sum of all numbers on the field. Next, `is_finished` property is for cases when user looses the game, and the `is_won` property indicates if you've reached the number 2048.
+As you can see a single game has the property of `grid` which is the $N$. It also stores the `score`, i.e. the sum of all numbers on the field. Next, `is_finished` property is for cases when user looses the game, and the `is_won` property indicates if you've reached the number 2048.
 
-Setting the board. It initializes a $$N \times N$$ matrix with zeros and then using the `add_num` function it adds a number in a random position.
+Setting the board. It initializes a $N \times N$ matrix with zeros and then using the `add_num` function it adds a number in a random position.
 
 ```
 	def set_board(self):
@@ -98,7 +98,7 @@ Otherwise, it also adds a new number on the filed (2 or 4)
 And after every move the app checks if the game is over. If no moves are available the the game stops and the application is no longer waiting for commands from the keyboard.
 
 ### View
-The View section is quite simple. It was created with Tkinter. At the very beginning a window is initialised with the size of $$600 \times 665$$ (the height is greater for a bottom bar with the height of $$65$$). Also all the necessary labels, buttons are initialised and the properties of the window are set:
+The View section is quite simple. It was created with Tkinter. At the very beginning a window is initialised with the size of $600 \times 665$ (the height is greater for a bottom bar with the height of $65$). Also all the necessary labels, buttons are initialised and the properties of the window are set:
 
 ```
 class View():
