@@ -13,10 +13,7 @@ class Game():
 	def set_board(self):
 		# Lcnum enq matrixy zronerov
 		self.board = np.zeros((self.grid, self.grid), dtype=int)
-
-		# Erku tex 2 enq avelacnum (vor anpayman tarber texer linen)
-		for _ in range(2):
-			self.add_num()
+		self.add_num()
 
 	# Avelacnel mek tiv
 	def add_num(self):
@@ -155,7 +152,7 @@ class Game():
 		if 0 not in self.board and not is_horiz_available and not is_vert_available:
 			self.is_finished = True
 			print("GAME OVER")
-			exit()
+			# exit()
 
 	def show_model(self):
 		self.update_score()
