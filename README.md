@@ -17,7 +17,7 @@ This is an implementation of 2048 game, which will work for any $N \times N$ gri
 ```
 python3 game.py
 ```
-*Note: to change the size * $N$ * of the grid find it in `controller.py` file*
+*Note: to change the size* $N$ *of the grid find it in `controller.py` file*
 
 ## Structure
 The application is created using the MVC (Model - View - Controller) pattern.
