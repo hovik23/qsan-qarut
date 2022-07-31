@@ -33,16 +33,3 @@ view.window.bind('<Down>', controller.update_view, add='+')
 
 view.window.mainloop()
 model.game.show_model()
-
-
-# # Console App
-# while model.game.is_won is False:
-# 	move = input("Qayl:")
-# 	print("Making move...")
-# 	model.game.make_move(move) # stack enq anum
-# 	model.game.check_finish()
-# 	print('Adding a num...')
-# 	model.game.add_num()
-# 	print("New matrix:")
-# 	model.game.show_model()
-# 	print()

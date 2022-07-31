@@ -22,7 +22,7 @@ class Game():
 	def add_num(self):
 		if 0 in self.board:
 			i, j = self.get_random_position()
-			self.board[i][j] = 2
+			self.board[i][j] = np.random.choice([2, 4])
 
 	# Gtnel azat vandak
 	def get_random_position(self):
@@ -32,36 +32,26 @@ class Game():
 		i, j = np.unravel_index(ind, self.board.shape)
 		return i, j
 
+	# TO-DO: Check if moves are available
 	def is_move_available(self):
 		is_horiz_available = False
 		is_vert_available = False
 
-		is_left_available = False
-		is_right_available = False
-		is_up_available = False
-		is_down_available = False
-
-		# stugum enq, ardyoq qayl ka "dba" dzax kam aj
 		for line in self.board:
-			line = line[line != 0]
-			for i in range(len(line) - 1):
+			for i in range(len(line[line != 0]) - 1):
 				if line[i] == line[i + 1]:
 					is_horiz_available = True
-
-		# stugum enq, ardyoq qayl ka "dba" nerqev kam verev
+					break
 		for line in self.board.transpose():
-			if 0 in line:
-				is_vert_available = True
-			line = line[line != 0]
-			for i in range(len(line) - 1):
+			for i in range(len(line[line != 0]) - 1):
 				if line[i] == line[i + 1]:
 					is_vert_available = True
+					break
 
 		return is_horiz_available, is_vert_available
 
 	def stack(self, move):
-		is_horiz_available, is_vert_available = self.is_move_available()
-
+		is_moved = False
 		# Dzax
 		if move == 'l':
 			# amen sharqi hamar
@@ -76,7 +66,11 @@ class Game():
 					p += 1
 				line = line[line != 0]
 				line = np.insert(line, len(line), [ 0 for _ in range(self.grid - len(line)) ])
-				self.board[i] = line
+				if not np.array_equal(self.board[i], line):
+					self.board[i] = line
+					is_moved = True
+			if is_moved:
+				self.add_num()
 
 		# Aj
 		elif move == 'r':
@@ -92,26 +86,14 @@ class Game():
 					p -= 1
 				line = line[line != 0]
 				line = np.insert(line, 0, [ 0 for _ in range(self.grid - len(line)) ])
-				self.board[i] = line
+				if not np.array_equal(self.board[i], line):
+					self.board[i] = line
+					is_moved = True
+			if is_moved:
+				self.add_num()
 
+		# Nerqev (dzhoxq)
 		elif move == 'b':
-			self.board = self.board.transpose()
-			# amen sharqi hamar
-			for i, line in enumerate(self.board):
-				line = line[line != 0]
-				# amen tvi hamar tvyal sharqum
-				p = 0
-				while p < len(line) - 1 and len(line) > 1:
-					if line[p] == line[p + 1]:
-						line[p] *= 2
-						line[p + 1] = 0
-					p += 1
-				line = line[line != 0]
-				line = np.insert(line, 0, [ 0 for _ in range(self.grid - len(line)) ])
-				self.board[i] = line
-			self.board = self.board.transpose()
-
-		elif move == 'u':
 			self.board = self.board.transpose()
 			# amen sharqi hamar
 			for i, line in enumerate(self.board):
@@ -124,14 +106,40 @@ class Game():
 						line[p - 1] = 0
 					p -= 1
 				line = line[line != 0]
-				line = np.insert(line, len(line), [ 0 for _ in range(self.grid - len(line)) ])
-				self.board[i] = line
+				line = np.insert(line, 0, [ 0 for _ in range(self.grid - len(line)) ])
+				if not np.array_equal(self.board[i], line):
+					self.board[i] = line
+					is_moved = True
+			if is_moved:
+				self.add_num()
 			self.board = self.board.transpose()
-					
+
+		# Verev
+		elif move == 'u':
+			self.board = self.board.transpose()
+			# amen sharqi hamar
+			for i, line in enumerate(self.board):
+				line = line[line != 0]
+				# amen tvi hamar tvyal sharqum
+				p = 0
+				while p < len(line) - 1 and len(line) > 1:
+					if line[p] == line[p + 1]:
+						line[p] *= 2
+						line[p + 1] = 0
+					p += 1
+				line = line[line != 0]
+				line = np.insert(line, len(line), [ 0 for _ in range(self.grid - len(line)) ])
+				if not np.array_equal(self.board[i], line):
+					self.board[i] = line
+					is_moved = True
+			if is_moved:
+				self.add_num()
+			self.board = self.board.transpose()
+
 	def make_move(self, move):
 		self.stack(move)
 		self.update_score()
-		self.check_finish()
+		# self.check_finish()
 
 	def update_score(self):
 		self.score = int(self.board.sum())
@@ -157,25 +165,21 @@ class Game():
 
 	def left_arrow(self, event):
 		self.make_move('l')
-		self.add_num()
 		self.show_model()
 		self.check_finish()
 
 	def right_arrow(self, event):
 		self.make_move('r')
-		self.add_num()
 		self.show_model()
 		self.check_finish()
 
 	def up_arrow(self, event):
 		self.make_move('u')
-		self.add_num()
 		self.show_model()
 		self.check_finish()
 
 	def down_arrow(self, event):
 		self.make_move('b')
-		self.add_num()
 		self.show_model()
 		self.check_finish()
 
