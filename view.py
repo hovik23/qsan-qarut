@@ -2,6 +2,23 @@ import tkinter as tk
 
 class View():
     def __init__(self):
+        self.start_window()
+        self.current_value = tk.StringVar()
+        self.spin_box = tk.Spinbox(
+            self.window,
+            from_=0,
+            to=50,
+            values=(tuple(range(4,16))),
+            textvariable=self.current_value,
+            wrap=True)
+        self.spin_box.pack()
+
+    def start_game(self):
+        self.new_game_button.place_forget()
+        self.main_canvas = self.set_main_canvas()
+        self.game_canvas = self.set_game_canvas()
+
+    def start_window(self):
         self.window = tk.Tk()
         self.window.title("Qsan Qarut")
         self.window.geometry('600x665')
@@ -14,9 +31,6 @@ class View():
             fg='white',
             bg='#121212')
         self.new_game_button = tk.Button()
-
-        self.main_canvas = self.set_main_canvas()
-        self.game_canvas = self.set_game_canvas()
 
     def set_main_canvas(self):
         canvas = tk.Canvas(self.window,
