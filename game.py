@@ -94,7 +94,7 @@ class Controller():
             bg='#121212',
             font=('Arial 25'),
             highlightbackground='#121212',
-            command=new_game)
+            command=self.new_game)
         self.view.new_game_button.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
 
         self.view.window.unbind('<Left>')
@@ -107,26 +107,26 @@ class Controller():
         self.view.finish_label.pack(side = tk.RIGHT, padx=25)
 
 
-def new_game():
-    controller.model.game.is_finished = False
-    controller.model.game.is_won = False
-    controller.model.game.score = 0
-    view.finish_label.pack_forget()
-    view.new_game_button.place_forget()
-    controller.model.game.set_board()
+    def new_game(self):
+        self.model.game.is_finished = False
+        self.model.game.is_won = False
+        self.model.game.score = 0
+        self.view.finish_label.pack_forget()
+        self.view.new_game_button.place_forget()
+        self.model.game.set_board()
 
-    view.window.bind('<Left>', model.game.left_arrow)
-    view.window.bind('<Left>', controller.update_view, add='+')
+        self.view.window.bind('<Left>', self.model.game.left_arrow)
+        self.view.window.bind('<Left>', self.update_view, add='+')
 
-    view.window.bind('<Right>', model.game.right_arrow)
-    view.window.bind('<Right>', controller.update_view, add='+')
+        self.view.window.bind('<Right>', self.model.game.right_arrow)
+        self.view.window.bind('<Right>', self.update_view, add='+')
 
-    view.window.bind('<Up>', model.game.up_arrow)
-    view.window.bind('<Up>', controller.update_view, add='+')
+        self.view.window.bind('<Up>', self.model.game.up_arrow)
+        self.view.window.bind('<Up>', self.update_view, add='+')
 
-    view.window.bind('<Down>', model.game.down_arrow)
-    view.window.bind('<Down>', controller.update_view, add='+')
+        self.view.window.bind('<Down>', self.model.game.down_arrow)
+        self.view.window.bind('<Down>', self.update_view, add='+')
 
-    controller.update_view('l')
+        self.update_view('l')
 
 controller = Controller()
